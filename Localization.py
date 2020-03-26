@@ -13,7 +13,8 @@ def find_screen(query_array):
             frame_grey_t = cv2.cvtColor(query_array[m], cv2.COLOR_BGR2GRAY)
             frame_tempdiff += temporal_diff(frame_grey, frame_grey_t)
 
-        frame_tempdiff = frame_tempdiff * 255
+        frame_tempdiff = frame_tempdiff * 150
+        frame_tempdiff = cv2.medianBlur(frame_tempdiff, 5)
         ret, thresh = cv2.threshold(frame_tempdiff, 127, 255, 0)
         cv2.imshow('image.jpg', thresh)
         cv2.waitKey()
