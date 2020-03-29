@@ -54,8 +54,10 @@ def find_screen(query_array, fps):
     for n in range(N-1):
         frame = query_array[n]
         crop = crop_screen(frame, screen_rectangle, False)
+        query_array_localized.append(crop)
         cv2.imshow('crop.jpg', crop[:, :])
         cv2.waitKey()
+    
 
 def temporal_diff(frame1, frame2, threshold=10):
     if frame1 is None or frame2 is None:
