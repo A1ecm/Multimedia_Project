@@ -7,6 +7,7 @@ def find_screen(query_array, fps):
     N = len(query_array)
     prev_frame = None
     temp_diff = []
+    print(np.shape(query_array[10]))
 
     for n in range(N-1):
         frame = query_array[n]
@@ -57,7 +58,8 @@ def find_screen(query_array, fps):
         query_array_localized.append(crop)
         cv2.imshow('crop.jpg', crop[:, :])
         cv2.waitKey()
-    
+
+    return query_array_localized
 
 def temporal_diff(frame1, frame2, threshold=10):
     if frame1 is None or frame2 is None:
@@ -75,6 +77,7 @@ def is_screen(thresh, rectangle):
     return True
 
 def crop_screen(image, rectangle, draw):
+    rectangle = rotate_rectangle(rectangle)
     # rotate img
     angle = rectangle[2]
     rows, cols = image.shape[0], image.shape[1]
@@ -91,6 +94,14 @@ def crop_screen(image, rectangle, draw):
         cv2.drawContours(image, [box], 0, (200, 0, 0), 2)
     return crop
 
+def rotate_rectangle(rectangle):
+	if rectangle[1][0] < rectangle[1][1]:
+		if rectangle[2] < -45:
+			rectangle = (rectangle[0], (rectangle[1][1], rectangle[1][0]), rectangle[2] + 90)
+		if rectangle[2] > 45:
+			rectangle = (rectangle[0], (rectangle[1][1], rectangle[1][0]), rectangle[2] - 90)
+
+	return rectangle
 
 # frame_grey = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
 # cv2.imwrite('grey.jpg', frame_grey)
