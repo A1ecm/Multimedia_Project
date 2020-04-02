@@ -7,9 +7,8 @@ def find_screen(query_array, fps):
     N = len(query_array)
     prev_frame = None
     temp_diff = []
-    print(np.shape(query_array[10]))
 
-    for n in range(N-1):
+    for n in range(N - 1):
         frame = query_array[n]
 
         if prev_frame is None:
@@ -21,13 +20,11 @@ def find_screen(query_array, fps):
             gray_diff[gray_diff < 80] = 0
             temp_diff += gray_diff
 
-
         prev_frame = frame
 
     temp_diff = cv2.medianBlur(temp_diff, 5)
-    cv2.imshow('Gray', temp_diff)
-    cv2.waitKey()
-
+    # cv2.imshow('Gray', temp_diff)
+    # cv2.waitKey()
 
     # checking all contours
     contours, hierarchy = cv2.findContours(temp_diff, cv2.RETR_LIST, cv2.CHAIN_APPROX_SIMPLE)
@@ -51,15 +48,20 @@ def find_screen(query_array, fps):
     # cv2.imshow('crop.jpg', crop_max[:, :])
     # cv2.waitKey()
     # query_array_localized.append(crop_max[:, :])
-    # out = cv2.VideoWriter('outpy.avi', cv2.VideoWriter_fourcc('M', 'J', 'P', 'G'), fps, (len(query_array_localized[0]), len(query_array_localized)))
-    for n in range(N-1):
+    for n in range(N - 1):
         frame = query_array[n]
         crop = crop_screen(frame, screen_rectangle, False)
-        query_array_localized.append(crop)
-        cv2.imshow('crop.jpg', crop[:, :])
-        cv2.waitKey()
 
+        query_array_localized.append(crop)
+        # cv2.imshow('crop.jpg', crop[:, :])
+        # cv2.waitKey()
+
+    out = cv2.VideoWriter('outpy.avi', cv2.VideoWriter_fourcc('M', 'J', 'P', 'G'), fps, (len(query_array_localized[0][0]), len(query_array_localized[0])))
+    for f in query_array_localized:
+        out.write(f)
+    out.release()
     return query_array_localized
+
 
 def temporal_diff(frame1, frame2, threshold=10):
     if frame1 is None or frame2 is None:
@@ -69,12 +71,14 @@ def temporal_diff(frame1, frame2, threshold=10):
     ret, diff_t = cv2.threshold(diff, threshold, 255, 0)
     return diff_t
 
+
 def is_screen(thresh, rectangle):
     crop = crop_screen(thresh, rectangle, False)
     height = len(crop)
     if (height == 0):
         return False
     return True
+
 
 def crop_screen(image, rectangle, draw):
     rectangle = rotate_rectangle(rectangle)
@@ -94,29 +98,12 @@ def crop_screen(image, rectangle, draw):
         cv2.drawContours(image, [box], 0, (200, 0, 0), 2)
     return crop
 
+
 def rotate_rectangle(rectangle):
-	if rectangle[1][0] < rectangle[1][1]:
-		if rectangle[2] < -45:
-			rectangle = (rectangle[0], (rectangle[1][1], rectangle[1][0]), rectangle[2] + 90)
-		if rectangle[2] > 45:
-			rectangle = (rectangle[0], (rectangle[1][1], rectangle[1][0]), rectangle[2] - 90)
+    if rectangle[1][0] < rectangle[1][1]:
+        if rectangle[2] < -45:
+            rectangle = (rectangle[0], (rectangle[1][1], rectangle[1][0]), rectangle[2] + 90)
+        if rectangle[2] > 45:
+            rectangle = (rectangle[0], (rectangle[1][1], rectangle[1][0]), rectangle[2] - 90)
 
-	return rectangle
-
-# frame_grey = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
-# cv2.imwrite('grey.jpg', frame_grey)
-# frame_tempdiff = np.zeros_like(frame)
-# for m in range(N - 1):
-#     frame_grey_t = cv2.cvtColor(query_array[m], cv2.COLOR_BGR2GRAY)
-#     frame_tempdiff += temporal_diff(frame, query_array[m])
-#
-# frame_tempdiff = frame_tempdiff * 10
-# cv2.imwrite('temp.jpg', frame_tempdiff)
-# # frame_tempdiff = cv2.medianBlur(frame_tempdiff, 7)
-# kernel = np.ones((5, 5), np.uint8)
-# # frame_tempdiff = cv2.morphologyEx(frame_tempdiff, cv2.MORPH_OPEN, kernel)
-# frame_tempdiff = cv2.morphologyEx(frame_tempdiff, cv2.MORPH_CLOSE, kernel)
-# # frame_tempdiff = cv2.morphologyEx(frame_tempdiff, cv2.MORPH_OPEN, kernel)
-# frame_tempdiff = cv2.cvtColor(frame_tempdiff, cv2.COLOR_BGR2GRAY)
-# ret, thresh = cv2.threshold(frame_tempdiff, 127, 255, 0)
-# cv2.imwrite('thresh.jpg', thresh)
+    return rectangle

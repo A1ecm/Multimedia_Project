@@ -23,4 +23,4 @@ def get_frames(query_path, video_base_path):
         query_array.append(frame)
 
     query_array_localized = Localization.find_screen(query_array, fps)
-    Recognize.recognize(query_array_localized, video_base_path)
+    Recognize.recognize(query_array_localized, video_base_path, fps)
