@@ -47,7 +47,8 @@ def find_screen(query_array, fps):
     # cv2.imwrite('cont.jpg', frame)
     # cv2.imshow('crop.jpg', crop_max[:, :])
     # cv2.waitKey()
-    # query_array_localized.append(crop_max[:, :])
+
+    # Crop every frame to the found contour of the screen
     for n in range(N - 1):
         frame = query_array[n]
         crop = crop_screen(frame, screen_rectangle, False)
